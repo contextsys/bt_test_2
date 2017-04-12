@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -64,6 +65,42 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up a pointer to the remote node using it's address.
         BluetoothDevice device = btAdapter.getRemoteDevice(btMacAddress);
+
+        // Two things are needed to make a connection:
+        //   A MAC address, which we got above.
+        //   A Service ID or UUID.  In this case we are using the
+        //     UUID for SPP.
+        try {
+            btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+        } catch (IOException e) {
+            errorExit("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+        }
+
+        // Discovery is resource intensive.  Make sure it isn't going on
+        // when you attempt to connect and pass your message.
+        btAdapter.cancelDiscovery();
+
+        // Establish the connection.  This will block until it connects.
+        Log.d(TAG, "...Connecting to Remote...");
+        try {
+            btSocket.connect();
+            Log.d(TAG, "...Connection established and data link opened...");
+        } catch (IOException e) {
+            try {
+                btSocket.close();
+            } catch (IOException e2) {
+                errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+            }
+        }
+
+        // Create a data stream so we can talk to server.
+        Log.d(TAG, "...Creating Socket...");
+
+        try {
+            outStream = btSocket.getOutputStream();
+        } catch (IOException e) {
+            errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,5 +160,22 @@ public class MainActivity extends AppCompatActivity {
                 title + " - " + message, Toast.LENGTH_SHORT);
         msg.show();
         finish();
+    }
+
+    private void sendData(String message) {
+        byte[] msgBuffer = message.getBytes();
+
+        Log.d(TAG, "...Sending data: " + message + "...");
+
+        try {
+            outStream.write(msgBuffer);
+        } catch (IOException e) {
+            String msg = "In onResume() and an exception occurred during write: " + e.getMessage();
+            if (address.equals("00:00:00:00:00:00"))
+                msg = msg + ".\n\nUpdate your server address from 00:00:00:00:00:00 to the correct address on line 37 in the java code";
+            msg = msg +  ".\n\nCheck that the SPP UUID: " + MY_UUID.toString() + " exists on server.\n\n";
+
+            errorExit("Fatal Error", msg);
+        }
     }
 }
