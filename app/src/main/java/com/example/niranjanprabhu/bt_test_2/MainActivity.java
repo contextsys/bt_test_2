@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         TextView btMacTextView = (TextView) findViewById(R.id.btmacDataView);
         btMacTextView.setText(btMacAddress);
 
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             outStream.write(msgBuffer);
         } catch (IOException e) {
             String msg = "In onResume() and an exception occurred during write: " + e.getMessage();
-            if (address.equals("00:00:00:00:00:00"))
+            if (btMacAddress.equals("00:00:00:00:00:00"))
                 msg = msg + ".\n\nUpdate your server address from 00:00:00:00:00:00 to the correct address on line 37 in the java code";
             msg = msg +  ".\n\nCheck that the SPP UUID: " + MY_UUID.toString() + " exists on server.\n\n";
 
