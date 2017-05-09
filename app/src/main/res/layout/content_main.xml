@@ -31,15 +31,16 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/bConnect"
+        android:id="@+id/bStop"
         android:layout_width="113dp"
         android:layout_height="59dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="btConnect"
-        android:text="Connect"
+        android:elevation="8dp"
+        android:onClick="btnPressStop"
+        android:text="Stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -52,26 +53,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="Fwd"
-        app:layout_constraintBottom_toTopOf="@+id/bConnect"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="@+id/bConnect"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/bConnect"
-        app:layout_constraintHorizontal_bias="0.444" />
+        android:layout_marginRight="8dp"
+        android:onClick="btnPressFwd"
+        android:text="Fwd"
+        app:layout_constraintBottom_toTopOf="@+id/bStop"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintLeft_toLeftOf="@+id/bStop"
+        app:layout_constraintRight_toRightOf="@+id/bStop" />
 
     <Button
         android:id="@+id/bBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_marginTop="22dp"
-        app:layout_constraintTop_toBottomOf="@+id/bConnect"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/bConnect"
         android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="@+id/bConnect"
-        app:layout_constraintHorizontal_bias="0.444" />
+        android:layout_marginTop="22dp"
+        android:onClick="btnPressBack"
+        android:text="Back"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintLeft_toLeftOf="@+id/bStop"
+        app:layout_constraintRight_toRightOf="@+id/bStop"
+        app:layout_constraintTop_toBottomOf="@+id/bStop" />
 
     <TextView
         android:id="@+id/btStatusView"

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -55,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
         TextView btMacTextView = (TextView) findViewById(R.id.btmacDataView);
         btMacTextView.setText(btMacAddress);
 
+
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        checkBTState();
+
     }
 
     @Override
@@ -102,6 +107,29 @@ public class MainActivity extends AppCompatActivity {
             errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "...In onPause()...");
+
+        if (outStream != null) {
+            try {
+                outStream.flush();
+            } catch (IOException e) {
+                errorExit("Fatal Error", "In onPause() and failed to flush output stream: " + e.getMessage() + ".");
+            }
+        }
+
+        try     {
+            btSocket.close();
+        } catch (IOException e2) {
+            errorExit("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
+        }
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -177,5 +205,26 @@ public class MainActivity extends AppCompatActivity {
 
             errorExit("Fatal Error", msg);
         }
+    }
+
+    public void btnPressFwd(View view) {
+        Log.d(TAG, "In btnPressFwd...");
+
+        sendData("1");
+
+    }
+
+    public void btnPressStop(View view) {
+        Log.d(TAG, "In btnPressStop...");
+
+        sendData("3");
+
+    }
+
+    public void btnPressBack(View view) {
+        Log.d(TAG, "In btnPressBack...");
+
+        sendData("5");
+
     }
 }
