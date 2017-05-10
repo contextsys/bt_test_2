@@ -23,6 +23,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BTWheels";
+    private Boolean btConnected = false;
 
     BtLog btLogStatus = new BtLog();
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "...Connecting to Remote...");
         try {
             btSocket.connect();
-            Log.d(TAG, "...Connection established and data link opened...");
+
         } catch (IOException e) {
             try {
                 btSocket.close();
@@ -98,13 +99,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Create a data stream so we can talk to server.
-        Log.d(TAG, "...Creating Socket...");
+        btConnected = btSocket.isConnected();
+        if (btConnected) {
+            Log.d(TAG, "...Connection established and data link opened...");
+        } else {
+            Log.d(TAG, "...Unable to connect to BTWheels. BTwheels not switched on");
+            errorExit("Fatal Error", "In onResume() and unable to connect" +  ".");
+        }
 
-        try {
-            outStream = btSocket.getOutputStream();
-        } catch (IOException e) {
-            errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+        if (btConnected) {
+            // Create a data stream so we can talk to server.
+            Log.d(TAG, "...Creating Socket...");
+
+            try {
+                outStream = btSocket.getOutputStream();
+            } catch (IOException e) {
+                errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+            }
         }
     }
 
@@ -124,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         try     {
             btSocket.close();
+            btConnected = false;
         } catch (IOException e2) {
             errorExit("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
         }
@@ -209,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnPressFwd(View view) {
         Log.d(TAG, "In btnPressFwd...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving Fwd...");
 
         sendData("1");
 
@@ -216,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnPressStop(View view) {
         Log.d(TAG, "In btnPressStop...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Stopping...");
 
         sendData("3");
 
@@ -223,8 +239,47 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnPressBack(View view) {
         Log.d(TAG, "In btnPressBack...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving Back...");
 
         sendData("5");
 
     }
+
+    public void btnPressLeftFwd(View view) {
+        Log.d(TAG, "In btnPressBack...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving LeftFwd...");
+
+        sendData("2");
+
+    }
+
+    public void btnPressLeftBack(View view) {
+        Log.d(TAG, "In btnPressBack...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving LeftBack...");
+
+        sendData("6");
+
+    }
+
+    public void btnPressRightFwd(View view) {
+        Log.d(TAG, "In btnPressBack...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving RightFwd...");
+
+        sendData("4");
+
+    }
+
+    public void btnPressRightBack(View view) {
+        Log.d(TAG, "In btnPressBack...");
+        TextView statusView = (TextView) findViewById(R.id.btStatusView);
+        btLogStatus.statusLog(statusView, "Status: Moving RightBack...");
+
+        sendData("7");
+
+    }
+
 }
